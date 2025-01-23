@@ -62,6 +62,20 @@ def decodeMessageEx(encodedMessage):
         return ''.join(decoded_message)
     
 def decodeMessage(encodedMessage):
+    char_map = {
+        '*': '@',
+        '|': '!',
+        '$': '?',
+        '_': ' '
+    }
+    
+    consonant_map = {
+        'b': 'z', 'c': 'y', 'd': 'x', 'f': 'w', 'g': 'v',
+        'h': 't', 'j': 's', 'k': 'r', 'l': 'q', 'm': 'p',
+        'n': 'n', 'p': 'm', 'q': 'l', 'r': 'k', 's': 'j',
+        't': 'h', 'v': 'g', 'w': 'f', 'x': 'd', 'y': 'c', 'z': 'b'
+    }
+    
     if encodedMessage == "":
         return ""
     
@@ -70,9 +84,26 @@ def decodeMessage(encodedMessage):
     for char in encodedMessage:
         # remove vogal duplicada
         if char in "aeiou" and prev_char == char:
+            prev_char = None # limpa depois de achar um par
             continue
         prev_char = char
+    
+        # Caracteres especiais convertidos
+        if char in char_map:
+            char = char_map[char]
+            
+        # remove os caracteres indesejados
+        if char in {'#', '^'}:
+            continue
         
+        # Decrementa o número
+        if char.isdigit():
+            char = '9' if char == '0' else str(int(char) - 1)
+            
+        # Inverte consoantes
+        if char in consonant_map:
+            char = consonant_map[char]
+                        
         # adiciona o char a resposta
         decoded_message = decoded_message + char
 
